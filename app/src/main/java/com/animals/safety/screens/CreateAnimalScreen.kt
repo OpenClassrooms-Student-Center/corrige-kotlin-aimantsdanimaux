@@ -55,12 +55,11 @@ fun CreateAnimalScreen(
   val scope = rememberCoroutineScope()
   val snackbarHostState = remember { SnackbarHostState() }
 
-  //TODO: à compléter
-  val name = remember { mutableStateOf("") }
-  val breed = remember { mutableStateOf(Breed.entries[0]) }
-  val age = remember { mutableStateOf("") }
-  val weight = remember { mutableStateOf("") }
-  val height = remember { mutableStateOf("") }
+  val name = remember { mutableStateOf(animal?.name ?: "") }
+  val breed = remember { mutableStateOf(animal?.breed ?: Breed.entries[0]) }
+  val age = remember { mutableStateOf(animal?.age?.toString() ?: "") }
+  val weight = remember { mutableStateOf(animal?.weight?.toString() ?:"") }
+  val height = remember { mutableStateOf(animal?.height?.toString() ?: "") }
 
   Scaffold(
     modifier = modifier,
@@ -88,7 +87,7 @@ fun CreateAnimalScreen(
     floatingActionButton = {
       ExtendedFloatingActionButton(
         onClick = {
-          if (verifyAndCreateAnimal(name.value, breed.value, age.value, weight.value, height.value, snackbarHostState, scope)) {
+          if (verifyAndCreateAnimal(animal, name.value, breed.value, age.value, weight.value, height.value, snackbarHostState, scope)) {
             onSaveClick()
           }
         }
@@ -111,6 +110,7 @@ fun CreateAnimalScreen(
 }
 
 fun verifyAndCreateAnimal(
+  animal: Animal?,
   name: String,
   breed: Breed,
   age: String,
@@ -161,9 +161,13 @@ fun verifyAndCreateAnimal(
     return false;
   }
 
+  animal?.let {
+    AnimalData.animals.remove(it)
+  }
+
   AnimalData.animals.add(
     Animal(
-      UUID.randomUUID(),
+      animal?.id ?: UUID.randomUUID(),
       name,
       breed,
       animalAge,

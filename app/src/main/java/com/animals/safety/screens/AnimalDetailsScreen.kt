@@ -48,7 +48,7 @@ fun AnimalDetailsScreen(
   modifier: Modifier = Modifier,
   animal: Animal?,
   onDeleteClick: () -> Unit = {},
-  onEditClick: () -> Unit = {},
+  onEditClick: (Animal) -> Unit = {},
   onBackClick: () -> Unit,
 ) {
   Scaffold(
@@ -78,7 +78,9 @@ fun AnimalDetailsScreen(
       ) {
         ExtendedFloatingActionButton(
           onClick = {
-            onEditClick()
+            animal?.let {
+              onEditClick(it)
+            }
           },
           icon = { Icon(Icons.Filled.Edit, "Edit") },
           text = { Text(text = stringResource(id = R.string.description_button_edit)) },

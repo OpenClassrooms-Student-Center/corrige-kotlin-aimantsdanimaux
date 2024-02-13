@@ -59,7 +59,11 @@ fun AimantsDanimauxNavHost(navHostController: NavHostController) {
         animal = AnimalData.findAnimalById(it.arguments?.getString("animalId") ?: ""),
         onDeleteClick = { navHostController.navigateUp() },
         onEditClick = {
-
+          navHostController.navigate(
+            Screen.CreateAnimal.createRoute(
+              animalId = it.id.toString()
+            )
+          )
         },
         onBackClick = { navHostController.navigateUp() }
       )
