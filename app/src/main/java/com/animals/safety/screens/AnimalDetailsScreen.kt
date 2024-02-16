@@ -187,7 +187,6 @@ private fun Property(
     Text(
       text = text,
       textAlign = TextAlign.Center,
-      color = MaterialTheme.colorScheme.onSurface,
       style = MaterialTheme.typography.bodyMedium
     )
   }
