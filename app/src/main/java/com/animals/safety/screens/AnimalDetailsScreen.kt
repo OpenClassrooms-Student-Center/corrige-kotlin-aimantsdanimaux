@@ -49,7 +49,6 @@ import java.util.UUID
 fun AnimalDetailsScreen(
   modifier: Modifier = Modifier,
   animal: Animal?,
-  onDeleteClick: () -> Unit = {},
   onEditClick: (Animal) -> Unit = {},
   onBackClick: () -> Unit,
 ) {
@@ -90,7 +89,7 @@ fun AnimalDetailsScreen(
         ExtendedFloatingActionButton(
           onClick = {
             AnimalData.animals.remove(animal)
-            onDeleteClick()
+            onBackClick()
           },
           contentColor = Color.White,
           containerColor = Color.Red,
