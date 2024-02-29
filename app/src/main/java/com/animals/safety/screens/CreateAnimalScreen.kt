@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,11 +59,11 @@ fun CreateAnimalScreen(
   val scope = rememberCoroutineScope()
   val snackbarHostState = remember { SnackbarHostState() }
 
-  val name = remember { mutableStateOf(animal?.name ?: "") }
-  val breed = remember { mutableStateOf(animal?.breed ?: Breed.entries[0]) }
-  val age = remember { mutableStateOf(animal?.age?.toString() ?: "") }
-  val weight = remember { mutableStateOf(animal?.weight?.toString() ?:"") }
-  val height = remember { mutableStateOf(animal?.height?.toString() ?: "") }
+  val name = rememberSaveable { mutableStateOf(animal?.name ?: "") }
+  val breed = rememberSaveable { mutableStateOf(animal?.breed ?: Breed.entries[0]) }
+  val age = rememberSaveable { mutableStateOf(animal?.age?.toString() ?: "") }
+  val weight = rememberSaveable { mutableStateOf(animal?.weight?.toString() ?:"") }
+  val height = rememberSaveable { mutableStateOf(animal?.height?.toString() ?: "") }
 
   Scaffold(
     modifier = modifier,
@@ -103,11 +104,16 @@ fun CreateAnimalScreen(
   ) { contentPadding ->
     CreateAnimal(
       modifier = Modifier.padding(contentPadding),
-      name = name,
-      breed = breed,
-      age = age,
-      weight = weight,
-      height = height
+      name = name.value,
+      onNameChanged = { name.value = it },
+      breed = breed.value,
+      onBreedChanged = { breed.value = it },
+      age = age.value,
+      onAgeChanged = { age.value = it },
+      weight = weight.value,
+      onWeightChanged = { weight.value = it },
+      height = height.value,
+      onHeightChanged = { height.value = it }
     )
   }
 }
@@ -187,11 +193,16 @@ fun verifyAndCreateAnimal(
 @Composable
 private fun CreateAnimal(
   modifier: Modifier = Modifier,
-  name: MutableState<String>,
-  age: MutableState<String>,
-  weight: MutableState<String>,
-  height: MutableState<String>,
-  breed: MutableState<Breed>
+  name: String,
+  onNameChanged: (String) -> Unit,
+  age: String,
+  onAgeChanged: (String) -> Unit,
+  weight: String,
+  onWeightChanged: (String) -> Unit,
+  height: String,
+  onHeightChanged: (String) -> Unit,
+  breed: Breed,
+  onBreedChanged: (Breed) -> Unit
 ) {
   val scrollState = rememberScrollState()
   var isExpanded by remember { mutableStateOf(false) }
@@ -206,8 +217,8 @@ private fun CreateAnimal(
       modifier = Modifier
         .padding(top = 16.dp)
         .fillMaxWidth(),
-      value = name.value,
-      onValueChange = { name.value = it },
+      value = name,
+      onValueChange = { onNameChanged(it) },
       label = { Text(stringResource(id = R.string.hint_name)) },
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
       singleLine = true
@@ -223,7 +234,7 @@ private fun CreateAnimal(
         modifier = Modifier
           .fillMaxWidth()
           .menuAnchor(),
-        value = stringResource(id = breed.value.translatedName),
+        value = stringResource(id = breed.translatedName),
         onValueChange = {},
         readOnly = true,
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
@@ -237,7 +248,7 @@ private fun CreateAnimal(
           DropdownMenuItem(
             text = { Text(text = stringResource(id = it.translatedName)) },
             onClick = {
-              breed.value = it
+              onBreedChanged(it)
               isExpanded = false
             }
           )
@@ -248,8 +259,8 @@ private fun CreateAnimal(
       modifier = Modifier
         .padding(top = 16.dp)
         .fillMaxWidth(),
-      value = age.value,
-      onValueChange = { age.value = it },
+      value = age,
+      onValueChange = { onAgeChanged(it) },
       label = { Text(stringResource(id = R.string.hint_age)) },
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
       singleLine = true
@@ -258,8 +269,8 @@ private fun CreateAnimal(
       modifier = Modifier
         .padding(top = 16.dp)
         .fillMaxWidth(),
-      value = weight.value,
-      onValueChange = { weight.value = it },
+      value = weight,
+      onValueChange = { onWeightChanged(it) },
       label = { Text(stringResource(id = R.string.hint_weight)) },
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
       singleLine = true
@@ -268,8 +279,8 @@ private fun CreateAnimal(
       modifier = Modifier
         .padding(top = 16.dp)
         .fillMaxWidth(),
-      value = height.value,
-      onValueChange = { height.value = it },
+      value = height,
+      onValueChange = { onHeightChanged(it) },
       label = { Text(stringResource(id = R.string.hint_height)) },
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
       singleLine = true
@@ -281,18 +292,17 @@ private fun CreateAnimal(
 @Composable
 private fun CreateAnimalPreview() {
   AimantsDanimauxTheme(dynamicColor = false) {
-    val name = remember { mutableStateOf("Milou") }
-    val breed = remember { mutableStateOf(Breed.entries[0]) }
-    val age = remember { mutableStateOf("6") }
-    val weight = remember { mutableStateOf("473.6") }
-    val height = remember { mutableStateOf("14.7") }
-
     CreateAnimal(
-      name = name,
-      age = age,
-      weight = weight,
-      height = height,
-      breed = breed
+      name = "Milou",
+      onNameChanged = { },
+      age = "6",
+      onAgeChanged = { },
+      weight = "473.6",
+      onWeightChanged = { },
+      height = "14.7",
+      onHeightChanged = { },
+      breed = Breed.entries[0],
+      onBreedChanged = { }
     )
   }
 }
